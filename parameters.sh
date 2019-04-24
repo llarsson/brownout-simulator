@@ -73,9 +73,5 @@ for setpoint in 0.05 0.1 0.15 0.2; do # 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1; do
 		profit=$(grep -A 3 Brownout experiments/${experimentName}/${sub}/summary | tail -n 1 | cut -d ',' -f 9)
 
 		echo "${setpoint} ${pole} ${profit}" >> experiments/${experimentName}/brownout_profit
-		
-		for plot in $(ls plots/*.sh); do
-			$plot $experimentName/$sub
-		done
 	done
 done
