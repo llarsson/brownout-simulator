@@ -1,0 +1,24 @@
+never
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': -1.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+20053,0,0.0010018407755,0.00267386085371,0.003660013095,0.00815173303696,0.0,0.000891085727492,20053.0,0.168943269608
+Brownout
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 666.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+19222,9573,0.0411608873833,0.123608495764,0.206359154033,0.483184437397,0.498023098533,0.0432037984969,24008.5,0.871070388608
+ut=0.50
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 0.5}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+18757,6567,0.0638623842999,0.239792536701,0.352568285668,0.543447027721,0.350109292531,0.0836392140783,22040.5,0.649843447127
+ut=0.95
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 0.95}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+18529,6908,0.0769408535757,0.278396631455,0.424435542979,0.815529167198,0.372820983323,0.0982822841458,21983.0,0.683047189748
+always
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 200.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+11699,11699,0.713008964485,1.46784452765,1.78128232165,2.57212701128,1.0,0.354996132987,17548.5,0.994968900609
+qe
+[{'name': 'individual-model', 'level': 0.05}, {'name': 'similar-specific', 'level': 0.25}, {'name': 'similar-general', 'level': 0.35}, {'name': 'equal-tags', 'level': 0.75}, {'name': 'cached-prior', 'level': 0.99}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+18732,14548,0.0687489856366,0.266054265052,0.561648340633,2.93426309839,0.776638906684,0.130942335351,26006.0,0.664569680618
