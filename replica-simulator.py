@@ -33,16 +33,54 @@ def main():
 	parser.add_argument('--controlPeriod',
 		help = 'Specify the control period of the replica controller',
 		default = 0.5)
+	parser.add_argument('--individualModel',
+		help = 'Utilization threshold for the individual-model quality',
+		default = 2.0)
+	parser.add_argument('--similarSpecific',
+		help = 'Utilization threshold for the similar-specific quality',
+		default = 2.0)
+	parser.add_argument('--similarGeneral',
+		help = 'Utilization threshold for the similar-general quality',
+		default = 0.5)
+	parser.add_argument('--equalTags',
+		help = 'Utilization threshold for the equal-tags quality',
+		default = 2.0)
+	parser.add_argument('--cachedPrior',
+		help = 'Utilization threshold for the cached-prior quality',
+		default = 2.0)
+	parser.add_argument('--drop',
+		help = 'Utilization threshold for the drop quality',
+		default = 2.0)
 	parser.add_argument('--scenario',
 		help = 'Specify a scenario in which to test the system',
 		default = os.path.join(os.path.dirname(sys.argv[0]), 'scenarios', 'replica-test-1.py'))
 	args = parser.parse_args()
 
+	quality_levels = {
+			'individual-model': {'service_time': 0.03000, 'variance': 0.1000},
+			'similar-specific': {'service_time': 0.01400, 'variance': 0.0150},
+			'similar-general':  {'service_time': 0.00700, 'variance': 0.0100},
+			'equal-tags':       {'service_time': 0.00250, 'variance': 0.0080},
+			'cached-prior':     {'service_time': 0.00085, 'variance': 0.0015},
+			'drop':             {'service_time': 0.00067, 'variance': 0.0010}
+			}
+
+	thresholds = [ 
+			{'name': 'individual-model', 'level': float(args.individualModel)},
+			{'name': 'similar-specific', 'level': float(args.similarSpecific)},
+			{'name': 'similar-general',  'level': float(args.similarGeneral)},
+			{'name': 'equal-tags',       'level': float(args.equalTags)},
+			{'name': 'cached-prior',     'level': float(args.cachedPrior)},
+			{'name': 'drop',             'level': float(args.drop)},
+			]
+
+	print(str(thresholds))
+
 	random.seed(1)
 	sim = SimulatorKernel(outputDirectory = args.outdir)
-	server = Server(sim, controlPeriod = args.controlPeriod,
-		serviceTimeY = 0.0070, serviceTimeN = 0.00067, \
-		timeSlice = args.timeSlice)
+	server = Server(sim, quality_levels, thresholds, 
+			controlPeriod = args.controlPeriod,
+			timeSlice = args.timeSlice)
 	clients = []
 	openLoopClient = OpenLoopClient(sim, server)
 
@@ -93,6 +131,8 @@ def main():
 	toReport.append(("maxResponseTime", max(responseTimes)))
 	toReport.append(("optionalRatio", numRequestsWithOptional / len(responseTimes)))
 	toReport.append(("stddevResponseTime", np.std(responseTimes)))
+	toReport.append(("profit", 1.5 * numRequestsWithOptional + (len(responseTimes) - numRequestsWithOptional)))
+	toReport.append(("avgUtilization", float(sum(server.utilizationReadings)) / len(server.utilizationReadings) ))
 
 	print(*[k for k,v in toReport], sep = ',')
 	print(*[v for k,v in toReport], sep = ',')

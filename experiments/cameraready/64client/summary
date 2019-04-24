@@ -1,0 +1,28 @@
+never
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': -1.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6468,0,0.00088483510134,0.00239083493432,0.00315727950988,0.00639671172183,0.0,0.000797013027157,6468.0,0.0540770759195
+Brownout-stock
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 666.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6212,6198,0.0157751772542,0.0455324891365,0.0740989980675,0.124979021035,0.997746297489,0.0153275798561,9311.0,0.502880751978
+Brownout-tuned
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 666.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6172,6084,0.0162183022129,0.047557339724,0.081696006199,0.215510793267,0.98574206092,0.0172043598262,9214.0,0.503892918534
+ut=0.50
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 0.5}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6384,4017,0.0109891670262,0.0388163444886,0.0672153870576,0.150899458874,0.629229323308,0.0149899275584,8392.5,0.356217611199
+ut=0.95
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 0.95}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6361,6361,0.0168454063022,0.049194410203,0.075569519918,0.178291301175,1.0,0.016434132586,9541.5,0.527496217755
+always
+[{'name': 'individual-model', 'level': -1.0}, {'name': 'similar-specific', 'level': -1.0}, {'name': 'similar-general', 'level': 200.0}, {'name': 'equal-tags', 'level': -1.0}, {'name': 'cached-prior', 'level': -1.0}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6361,6361,0.0168454063022,0.049194410203,0.075569519918,0.178291301175,1.0,0.016434132586,9541.5,0.527496217755
+qe
+[{'name': 'individual-model', 'level': 0.05}, {'name': 'similar-specific', 'level': 0.25}, {'name': 'similar-general', 'level': 0.35}, {'name': 'equal-tags', 'level': 0.75}, {'name': 'cached-prior', 'level': 0.99}, {'name': 'drop', 'level': 2.0}]
+numRequests,numRequestsWithOptional,avgResponseTime,p95ResponseTime,p99ResponseTime,maxResponseTime,optionalRatio,stddevResponseTime,profit,avgUtilization
+6315,6248,0.0216442309195,0.0877167731497,0.159640595051,1.4311004404,0.989390340459,0.0497097805275,9439.0,0.458824474855

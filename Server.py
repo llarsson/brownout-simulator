@@ -13,30 +13,18 @@ class Server:
 
 	## Constructor.
 	# @param sim Simulator to attach the server to
-	# @param serviceTimeY time to service one request with optional content
-	# @param serviceTimeN time to service one request without optional content
-	# @param serviceTimeYVariance varince in service-time with optional content
-	# @param serviceTimeNVariance varince in service-time without optional content
 	# @param minimumServiceTime minimum service-time (despite variance)
 	# @param timeSlice time slice; a request longer that this will observe
 	# context-switching
 	# @param initialTheta initial dimmer value
 	# @param controlPeriod control period of brownout controller (0 = disabled)
 	# @note The constructor adds an event into the simulator
-	def __init__(self, sim, serviceTimeY = 0.07, serviceTimeN = 0.001, \
-			initialTheta = 0.5, controlPeriod = 5, timeSlice = 0.01, \
-			serviceTimeYVariance = 0.01, serviceTimeNVariance = 0.001,
-			minimumServiceTime = 0.0001):
+	def __init__(self, sim, quality_levels, thresholds,
+			initialTheta = 0.5, controlPeriod = 5,
+			timeSlice = 0.01, minimumServiceTime = 0.0001):
+		self.quality_levels = quality_levels
 		## time slice for scheduling requests (server model parameter)
 		self.timeSlice = timeSlice
-		## service time with optional content (server model parameter)
-		self.serviceTimeY = serviceTimeY
-		## service time without optional content (server model parameter)
-		self.serviceTimeN = serviceTimeN
-		## service time variance with optional content (server model parameter)
-		self.serviceTimeYVariance = serviceTimeYVariance
-		## service time variance without optional content (server model parameter)
-		self.serviceTimeNVariance = serviceTimeNVariance
 		## minimum service time, despite variance (server model parameter)
 		self.minimumServiceTime = minimumServiceTime
 		## list of active requests (server model variable)
@@ -70,6 +58,11 @@ class Server:
 		## Server ID for pretty-printing
 		self.name = 'server' + str(Server.lastServerId)
 		Server.lastServerId += 1
+
+		## Current utilization
+		self.utilization = 0
+		self.utilizationReadings = []
+		self.thresholds = thresholds
 
 		## Reference to simulator
 		self.sim = sim
@@ -121,7 +114,8 @@ class Server:
 			self.theta = min(max(serviceLevel, 0.0), 1.0)
 		
 		# Compute utilization
-		utilization = (self.getActiveTime() - self.lastActiveTime) / self.controlPeriod
+		self.utilization = (self.getActiveTime() - self.lastActiveTime) / self.controlPeriod
+		self.utilizationReadings.append(self.utilization)
 		self.lastActiveTime = self.getActiveTime()
 
 		# Report
@@ -134,7 +128,7 @@ class Server:
 			np.percentile(self.latestLatencies, 99), \
 			maxOrNan(self.latestLatencies), \
 			self.theta, \
-			utilization, \
+			self.utilization, \
 		]
 		self.sim.output(self, ','.join(["{0:.5f}".format(value) \
 			for value in valuesToOutput]))
@@ -168,6 +162,43 @@ class Server:
 		self.sim.output(str(self) + '-arl', ','.join(["{0:.5f}".format(value) \
 			for value in valuesToOutput]))
 
+
+	def is_brownout(self):
+		threshold = [t for t in self.thresholds if t['name'] == 'similar-general'][0]
+		return threshold['level'] > 660
+
+
+	def quality_level_index(self, name):
+		for (index, level) in enumerate(self.thresholds):
+			if level['name'] == name:
+				return index
+		raise KeyError(name)
+
+
+	def determineServiceTime(self, activeRequest):
+		"Returns service time and variance thereof"
+		quality_level = 'drop' # sane default :D
+		if self.is_brownout():
+			# Original from Brownout paper, which understands only
+			# two quality levels.
+			activeRequest.withOptional = random.random() <= self.theta
+			if activeRequest.withOptional:
+				quality_level = 'similar-general'
+			else:
+				quality_level = 'drop'
+		else:
+			for threshold in self.thresholds:
+				if self.utilization <= threshold['level']:
+					quality_level = threshold['name']
+					break
+			activeRequest.withOptional = (quality_level != 'drop')
+
+		activeRequest.qualityLevel = self.quality_level_index(quality_level)
+
+		return (self.quality_levels[quality_level]['service_time'],\
+				self.quality_levels[quality_level]['variance']) 
+
+
 	## Event handler for scheduling active requests.
 	# This function is the core of the processor-sharing with time-slice model.
 	# This function is called when "context-switching" occurs. There must be at
@@ -193,12 +224,9 @@ class Server:
 			#self.sim.log(self, "request {0} entered the system", activeRequest)
 			# Pick whether to serve it with optional content or not
 			activeRequest.arrival = self.sim.now
-			activeRequest.withOptional = random.random() <= self.theta
 			activeRequest.theta = self.theta
 
-			serviceTime, variance = (self.serviceTimeY, self.serviceTimeYVariance) \
-				if activeRequest.withOptional else \
-				(self.serviceTimeN, self.serviceTimeNVariance)
+			serviceTime, variance = self.determineServiceTime(activeRequest)
 
 			activeRequest.remainingTime = \
 				max(random.normalvariate(serviceTime, variance), self.minimumServiceTime)
@@ -263,6 +291,25 @@ class Server:
 		]
 		self.sim.output(str(self) + '-arl', ','.join(["{0:.5f}".format(value) \
 			for value in valuesToOutput]))
+
+		# Report quality level
+		valuesToOutput = [ \
+			self.sim.now, \
+			request.arrival, \
+			request.completion - request.arrival, \
+		]
+		self.sim.output(str(self)+'-quality', ','.join(["{0:.5f}".format(value) \
+				for value in valuesToOutput]) + "," + str(request.qualityLevel))
+
+		# Report utilization level
+		valuesToOutput = [ \
+			self.sim.now, \
+			request.arrival, \
+			request.completion - request.arrival, \
+			self.utilization \
+		]
+		self.sim.output(str(self)+'-utilization', ','.join(["{0:.5f}".format(value) \
+				for value in valuesToOutput]))
 
 		# Continue with scheduler
 		if len(self.activeRequests) > 0:
