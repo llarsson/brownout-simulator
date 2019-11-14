@@ -1,6 +1,7 @@
 #!/bin/bash
 
-gnuplot="docker run -i --rm --volume $(pwd):/tmp -w /tmp gnuplot gnuplot"
+#gnuplot="docker run -i --rm --volume $(pwd):/tmp -w /tmp gnuplot gnuplot"
+gnuplot=$(which gnuplot)
 
 set -eo pipefail
 
