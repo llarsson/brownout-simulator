@@ -39,16 +39,18 @@ for sub in spectrum lowfrequency 1client 2client 4client 8client 16client 32clie
 			label="Brownout-stock"
 			folder=$label
 			similarGeneral=666
-			sed -i Server.py -e "s/self.setPoint = .*/self.setPoint = 1/g"
-			sed -i Server.py -e "s/self.pole = .*/self.pole = 0.9/g"
+			sed -e "s/self.setPoint = .*/self.setPoint = 1/g" -i tmp Server.py
+			sed -e "s/self.pole = .*/self.pole = 0.9/g" -i tmp Server.py
 			rm Server.pyc
+			rm Server.pytmp
 		elif [ $threshold == "666-tuned" ]; then
 			label="Brownout-tuned"
 			folder=$label
 			similarGeneral=666
-			sed -i Server.py -e "s/self.setPoint = .*/self.setPoint = 0.05/g"
-			sed -i Server.py -e "s/self.pole = .*/self.pole = 0.7/g"
+			sed -e "s/self.setPoint = .*/self.setPoint = 0.05/g" -i tmp Server.py
+			sed -e "s/self.pole = .*/self.pole = 0.7/g" -i tmp Server.py
 			rm Server.pyc
+			rm Server.pytmp
 		elif [ $threshold == "-1" ]; then
 			label="never"
 			folder=$label
