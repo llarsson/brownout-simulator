@@ -56,6 +56,7 @@ def main():
 		help = 'Specify a scenario in which to test the system',
 		default = os.path.join(os.path.dirname(sys.argv[0]), 'scenarios', 'replica-test-1.py'))
 	parser.add_argument('--utilizationReadingInterval',
+		type = int,
 		help = 'How often, in seconds, current utilization will be reported by the server process',
 		default = 0)
 	args = parser.parse_args()
