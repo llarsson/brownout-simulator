@@ -21,7 +21,8 @@ class Server:
 	# @note The constructor adds an event into the simulator
 	def __init__(self, sim, quality_levels, thresholds,
 			initialTheta = 0.5, controlPeriod = 5,
-			timeSlice = 0.01, minimumServiceTime = 0.0001):
+			timeSlice = 0.01, minimumServiceTime = 0.0001,
+			utilizationReadingInterval = 0):
 		self.quality_levels = quality_levels
 		## time slice for scheduling requests (server model parameter)
 		self.timeSlice = timeSlice
@@ -62,12 +63,25 @@ class Server:
 		## Current utilization
 		self.utilization = 0
 		self.utilizationReadings = []
+		self.cachedUtilizationReading = 0
+		self.cachedUtilizationReadingTimestamp = 0
+		self.utilizationReadingInterval = utilizationReadingInterval
 		self.thresholds = thresholds
 
 		## Reference to simulator
 		self.sim = sim
 		if self.controlPeriod > 0:
 			self.sim.add(0, self.runControlLoop)
+	
+	def getUtilization(self):
+		if not self.utilizationReadingInterval:
+			return self.utilization
+
+		if self.sim.now > self.cachedUtilizationReadingTimestamp + self.utilizationReadingInterval:
+			self.cachedUtilizationReading = self.utilization
+			self.cachedUtilizationReadingTimestamp = self.sim.now
+		return self.cachedUtilizationReading
+
 
 	## Compute the (simulated) amount of time this server has been active.
 	# @note In a real OS, the active time would be updated at each context switch.
@@ -188,7 +202,7 @@ class Server:
 				quality_level = 'drop'
 		else:
 			for threshold in self.thresholds:
-				if self.utilization <= threshold['level']:
+				if self.getUtilization() <= threshold['level']:
 					quality_level = threshold['name']
 					break
 			activeRequest.withOptional = (quality_level != 'drop')
