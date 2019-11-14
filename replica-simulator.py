@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import division, print_function
 
 ## @mainpage
@@ -13,6 +13,7 @@ from Clients import *
 from Request import *
 from Server import *
 from SimulatorKernel import *
+from LoadBalancers import *
 
 ## @package simulator Main simulator namespace
 
@@ -54,6 +55,9 @@ def main():
 	parser.add_argument('--scenario',
 		help = 'Specify a scenario in which to test the system',
 		default = os.path.join(os.path.dirname(sys.argv[0]), 'scenarios', 'replica-test-1.py'))
+	parser.add_argument('--utilizationReadingInterval',
+		help = 'How often, in seconds, current utilization will be reported by the server process',
+		default = 0)
 	args = parser.parse_args()
 
 	quality_levels = {
@@ -80,15 +84,29 @@ def main():
 	sim = SimulatorKernel(outputDirectory = args.outdir)
 	server = Server(sim, quality_levels, thresholds, 
 			controlPeriod = args.controlPeriod,
-			timeSlice = args.timeSlice)
+			timeSlice = args.timeSlice,
+			utilizationReadingInterval = args.utilizationReadingInterval)
 	clients = []
-	openLoopClient = OpenLoopClient(sim, server)
+	servers = [server]
+	loadbalancer = RoundRobinLoadBalancer()
+	openLoopClient = OpenLoopClient(sim, loadbalancer)
+
+	def setServers(n):
+		if len(servers) != 1:
+			raise Exception('Server number already set')
+
+		for i in range(n-1):
+			servers.append(Server(sim, quality_levels, thresholds, 
+				controlPeriod = args.controlPeriod,
+				timeSlice = args.timeSlice,
+				utilizationReadingInterval = args.utilizationReadingInterval))
+
 
 	# Define verbs for scenarios
 	def addClients(at, n):
 		def addClientsHandler():
 			for _ in range(0, n):
-				clients.append(ClosedLoopClient(sim, server))
+				clients.append(ClosedLoopClient(sim, loadbalancer))
 		sim.add(at, addClientsHandler)
 
 	def delClients(at, n):
@@ -112,14 +130,21 @@ def main():
 
 	# Load scenario
 	otherParams = {}
-	execfile(args.scenario)
+	exec(open(args.scenario).read())
 	
 	if 'simulateUntil' not in otherParams:
-		raise Exception("Scenario does not define end-of-simulation")
+		raise Exception('Scenario does not define end-of-simulation')
+
+	loadbalancer.setServers(servers)
 	sim.run(until = otherParams['simulateUntil'])
 
 	# Report end results
-	responseTimes = reduce(lambda x,y: x+y, [client.responseTimes for client in clients]) + openLoopClient.responseTimes
+	#responseTimes = reduce(lambda x,y: x+y, [client.responseTimes for client in clients]) + openLoopClient.responseTimes
+	responseTimes = []
+	for client in clients:
+		responseTimes += client.responseTimes
+	responseTimes += openLoopClient.responseTimes
+	#responseTimes = [responseTimes += client.responseTimes for client in clients] + openLoopClient.responseTimes
 
 	toReport = []
 	toReport.append(("numRequests", len(responseTimes)))
