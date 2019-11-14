@@ -8,5 +8,7 @@ latex
 # Results (maybe later we'll have them in the repo)
 results
 
+# MacOS
+.DS_Store
 
 plotscripts/data.mat
